@@ -1,6 +1,19 @@
 #include "rayt.h"
 
+bool hit_sphere(const vec3& center, float radius, const rayt::Ray& r) {
+    vec3 oc = r.origin() - center;
+    float a = dot(r.direction(), r.direction());
+    float b = 2.0f * dot(r.direction(), oc);
+    float c = dot(oc, oc) - pow2(radius);
+    float D = b * b - 4 * a * c;
+    return (D > 0);
+}
+
 vec3 color(const rayt::Ray& r) {
+    if (hit_sphere(vec3(0, 0, -1), 0.5f, r)) {
+        return vec3(0.0f, 1.0f, 0.0f);
+    }
+
     vec3 d = normalize(r.direction());
     float t = 0.5f * (r.direction().getY() + 1.0f);
     return lerp(t, vec3(0.5f, 0.7f, 1.0f), vec3(1));
