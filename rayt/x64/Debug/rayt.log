@@ -1,2 +1,2 @@
 ﻿  rayt.cpp
-  rayt.vcxproj -> C:\Users\sinnk\workspace\learn_rayt\rayt\x64\Debug\rayt.exe
+C:\Users\sinnk\workspace\learn_rayt\rayt\rayt.h(150,89): fatal  error C1075: '{': 一致するトークンが見つかりませんでした

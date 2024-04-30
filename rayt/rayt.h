@@ -42,6 +42,8 @@ typedef Vector3 col3;
 #include "stb_image.h"
 #include "stb_image_write.h"
 
+#define NUM_THREAD 8
+
 
 
 
@@ -61,7 +63,7 @@ namespace rayt {
             m_height = h;
             m_pixels.reset(new rgb[m_width * m_height]);
         }
-
+         
         int width() const { return m_width; }
         int height() const { return m_height; }
         void* pixels() const { return m_pixels.get(); }
@@ -125,4 +127,44 @@ namespace rayt {
         vec3 m_origin;
         vec3 m_uvw[3];
     };
+
+    class HitRec {
+    public:
+        float t;
+        vec3 p;
+        vec3 n;
+    };
+
+    class Shape {
+    public:
+        virtual bool hit(const rayt::Ray& r, float t0, float t1, HitRec& hrec) const = 0;
+    };
+
+    class Sphere : public Shape {
+    public:
+        Sphere(){}
+        Sphere(const vec3& c, float r)
+            :m_center(c)
+            ,m_radius(r){}
+
+        virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const override {
+            vec3 oc = r.origin() - m_center;
+            float a = dot(r.direction(), r.direction());
+            float b = 2.0f * dot(oc, r.direction());
+            float c = dot(oc, oc) - pow2(m_radius);
+            float D = b * b - 4 * a * c;
+
+            if(D > 0){
+                float root = sqrtf(D);
+                float temp = ( - b - root )/ (2.0f * a);
+                if(temp < t1 && temp > t0){
+                    hrec.t = temp;
+                    hrec.p = r.at(hrec.t);
+                    hrec.n = (hrec.p - m_center) / m_radius;
+                    return true;
+                }
+
+    private:
+        vec3 m_center;
+        float m_radius;
 } // namespace rayt
