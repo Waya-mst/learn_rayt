@@ -2,6 +2,7 @@
 #include <memory>
 #include <iostream>
 #include <float.h> 
+#include <vector>
 
 #define PI 3.14159265359f
 #define PI2 6.28318530718f
@@ -137,7 +138,7 @@ namespace rayt {
 
     class Shape {
     public:
-        virtual bool hit(const rayt::Ray& r, float t0, float t1, HitRec& hrec) const = 0;
+        virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const = 0;
     };
 
     class Sphere : public Shape {
@@ -154,17 +155,57 @@ namespace rayt {
             float c = dot(oc, oc) - pow2(m_radius);
             float D = b * b - 4 * a * c;
 
-            if(D > 0){
+            if (D > 0) {
                 float root = sqrtf(D);
-                float temp = ( - b - root )/ (2.0f * a);
-                if(temp < t1 && temp > t0){
+                float temp = (-b - root) / (2.0f * a);
+                if (temp < t1 && temp > t0) {
                     hrec.t = temp;
                     hrec.p = r.at(hrec.t);
                     hrec.n = (hrec.p - m_center) / m_radius;
                     return true;
                 }
+                temp = (-b + root) / (2.0f * a);
+                if (temp < t1 && temp > t0) {
+                    hrec.t = temp;
+                    hrec.p = r.at(hrec.t);
+                    hrec.n = (hrec.p - m_center) / m_radius;
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
     private:
         vec3 m_center;
         float m_radius;
+
+
 } // namespace rayt
+
+    class ShapeList : public Shape {
+    public:
+        ShapeList() {}
+
+        void add(const ShapePtr& shape) {
+            m_list.push_back(shape);
+        }
+
+        virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const override {
+            HitRec temp_rec;
+            bool hit_anything = false;
+            float closest_so_far = t1;
+            for (auto& p : m_list) {
+                if (p->hit(r, t0, closest_so_far, temp_rec)) {
+                    hit_anything = true;
+                    closest_so_far = temp_rec.t;
+                    hrec = temp_rec;
+                }
+            }
+
+            return hit_anything;
+        }
+
+    private:
+        std::vector<ShapePtr> m_list;
+    }
