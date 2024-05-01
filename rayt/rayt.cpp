@@ -1,6 +1,93 @@
 #include "rayt.h"
 
 namespace rayt {
+
+    class Shape;
+    typedef std::shared_ptr<Shape> ShapePtr;
+
+    class HitRec {
+    public:
+        float t;
+        vec3 p;
+        vec3 n;
+    };
+
+
+    class Shape {
+    public:
+        virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const = 0;
+    };
+
+    class ShapeList : public Shape {
+    public:
+        ShapeList() {}
+
+        void add(const ShapePtr& shape) {
+            m_list.push_back(shape);
+        }
+
+        virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const override {
+            HitRec temp_rec;
+            bool hit_anything = false;
+            float closest_so_far = t1;
+            for (auto& p : m_list) {
+                if (p->hit(r, t0, closest_so_far, temp_rec)) {
+                    hit_anything = true;
+                    closest_so_far = temp_rec.t;
+                    hrec = temp_rec;
+                }
+            }
+
+            return hit_anything;
+        }
+
+    private:
+        std::vector<ShapePtr> m_list;
+    };
+
+
+    class Sphere : public Shape {
+    public:
+        Sphere() {}
+        Sphere(const vec3& c, float r)
+            :m_center(c)
+            , m_radius(r) {}
+
+        virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const override {
+            vec3 oc = r.origin() - m_center;
+            float a = dot(r.direction(), r.direction());
+            float b = 2.0f * dot(oc, r.direction());
+            float c = dot(oc, oc) - pow2(m_radius);
+            float D = b * b - 4 * a * c;
+
+            if (D > 0) {
+                float root = sqrtf(D);
+                float temp = (-b - root) / (2.0f * a);
+                if (temp < t1 && temp > t0) {
+                    hrec.t = temp;
+                    hrec.p = r.at(hrec.t);
+                    hrec.n = (hrec.p - m_center) / m_radius;
+                    return true;
+                }
+                temp = (-b + root) / (2.0f * a);
+                if (temp < t1 && temp > t0) {
+                    hrec.t = temp;
+                    hrec.p = r.at(hrec.t);
+                    hrec.n = (hrec.p - m_center) / m_radius;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+    private:
+        vec3 m_center;
+        float m_radius;
+
+
+    };
+
     class Scene {
     public:
         Scene(int width, int height)
@@ -14,28 +101,24 @@ namespace rayt {
             vec3 u(4.0f, 0.0f, 0.0f);
             vec3 v(0.0f, 2.0f, 0.0f);
             m_camera = std::make_unique<Camera>(u, v, w);
+
+            // Shapes
+
+            ShapeList* world = new ShapeList();
+            world->add(std::make_shared<Sphere>(
+                vec3(0, 0, -1), 0.5f));
+            world->add(std::make_shared<Sphere>(
+                vec3(0, -100.5, -1), 100));
+            m_world.reset(world);
         }
 
-        float hit_sphere(const vec3& center, float radius, const rayt::Ray& r) const {
-            vec3 oc = r. origin() - center;
-            float a = dot(r.direction(), r.direction());
-            float b = 2.0f * dot(r.direction(), oc);
-            float c = dot(oc, oc) - pow2(radius);
-            float D = b * b - 4 * a * c;
-            if (D < 0) {
-                return -1.0f;
-            }
-            else {
-                return (-b - sqrtf(D)) / (2.0f * a);
-            }
-        }
 
-        vec3 color(const rayt::Ray& r) {
+        vec3 color(const rayt::Ray& r, const Shape* world) const {
+            HitRec hrec;
             vec3 c(0, 0, -1);
-            float t = hit_sphere(c, 0.5f, r);
-            if (t > 0.0f) {
-                vec3 N = normalize(r.at(t) - c);
-                return 0.5f * (N + vec3(1.0f));
+
+            if (world->hit(r, 0, FLT_MAX, hrec)) {
+                return 0.5f * (hrec.n + vec3(1.0f));
             }
             return backgroundSky(r.direction());
         }
@@ -63,7 +146,7 @@ namespace rayt {
                     float u = float(i + drand48()) / float(nx);
                     float v = float(j + drand48()) / float(ny);
                     Ray r = m_camera->getRay(u, v);
-                    vec3 c = color(r);
+                    vec3 c = color(r, m_world.get());
                     m_image->write(i, (ny - j - 1), c.getX(), c.getY(), c.getZ());
                 }
             }
@@ -74,6 +157,7 @@ namespace rayt {
     private:
         std::unique_ptr<Camera> m_camera;
         std::unique_ptr<Image> m_image;
+        std::unique_ptr<Shape> m_world;
         vec3 m_backColor;
     };
 }
