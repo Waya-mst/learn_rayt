@@ -47,7 +47,6 @@ typedef Vector3 col3;
 
 
 
-
 namespace rayt {
 
     class Image {

@@ -12,7 +12,6 @@ namespace rayt {
         vec3 n;
     };
 
-
     class Shape {
     public:
         virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const = 0;
@@ -44,7 +43,6 @@ namespace rayt {
     private:
         std::vector<ShapePtr> m_list;
     };
-
 
     class Sphere : public Shape {
     public:
@@ -90,9 +88,12 @@ namespace rayt {
 
     class Scene {
     public:
-        Scene(int width, int height)
+        Scene(int width, int height, int samples)
             : m_image(std::make_unique<Image>(width, height))
-            , m_backColor(0.2f) {}
+            , m_backColor(0.2f)
+            , m_samples(samples) {
+
+        }
 
         void build() {
             // camera
@@ -142,11 +143,14 @@ namespace rayt {
             for (int j = 0; j < ny; ++j) {
                 std::cerr << "Rendering (y = " << j << ") " << (100.0 * j / (ny - 1)) << "%" << std::endl;
                 for (int i = 0; i < nx; ++i) {
-
-                    float u = float(i + drand48()) / float(nx);
-                    float v = float(j + drand48()) / float(ny);
-                    Ray r = m_camera->getRay(u, v);
-                    vec3 c = color(r, m_world.get());
+                    vec3 c(0);
+                    for (int s = 0; s < m_samples; ++s) {
+                        float u = (float(i) + drand48()) / float(nx);
+                        float v = (float(j) + drand48()) / float(ny);
+                        Ray r = m_camera->getRay(u, v);
+                        c += color(r, m_world.get());
+                    }
+                    c /= m_samples;
                     m_image->write(i, (ny - j - 1), c.getX(), c.getY(), c.getZ());
                 }
             }
@@ -158,6 +162,7 @@ namespace rayt {
         std::unique_ptr<Camera> m_camera;
         std::unique_ptr<Image> m_image;
         std::unique_ptr<Shape> m_world;
+        int m_samples;
         vec3 m_backColor;
     };
 }
@@ -166,7 +171,8 @@ int main()
 {
     int nx = 200;
     int ny = 100;
-    std::unique_ptr<rayt::Scene> scene(std::make_unique<rayt::Scene>(nx, ny));
+    int ns = 100;
+    std::unique_ptr<rayt::Scene> scene(std::make_unique<rayt::Scene>(nx, ny, ns));
 
     scene->render();
 
