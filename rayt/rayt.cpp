@@ -7,9 +7,9 @@ namespace rayt {
 
     class HitRec {
     public:
-        float t;
-        vec3 p;
-        vec3 n;
+        float t; //光線のパラメタ
+        vec3 p; //衝突した位置
+        vec3 n; //衝突した点における法線
     };
 
     class Shape {
@@ -116,10 +116,10 @@ namespace rayt {
 
         vec3 color(const rayt::Ray& r, const Shape* world) const {
             HitRec hrec;
-            vec3 c(0, 0, -1);
 
             if (world->hit(r, 0, FLT_MAX, hrec)) {
-                return 0.5f * (hrec.n + vec3(1.0f));
+                vec3 target = hrec.p + hrec.n + random_in_unit_sphere();
+                return 0.5f * color(Ray(hrec.p, target - hrec.p), world);
             }
             return backgroundSky(r.direction());
         }
