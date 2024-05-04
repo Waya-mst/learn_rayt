@@ -1,9 +1,11 @@
 #pragma once
 #include <memory>
 #include <iostream>
-#include <float.h> 
 #include <vector>
 
+#define NUM_THREAD 8
+
+#include <float.h> 
 #define PI 3.14159265359f
 #define PI2 6.28318530718f
 #define RECIP_PI 0.31830988618f
@@ -43,11 +45,26 @@ typedef Vector3 col3;
 #include "stb_image.h"
 #include "stb_image_write.h"
 
-#define NUM_THREAD 8
+
 
 
 
 namespace rayt {
+
+    inline vec3 linear_to_gamma(const vec3& v, float gammaFactor) {
+        float recipGammaFactor = recip(gammaFactor);
+        return vec3(
+            powf(v.getX(), recipGammaFactor),
+            powf(v.getY(), recipGammaFactor),
+            powf(v.getZ(), recipGammaFactor));
+    }
+
+    inline vec3 gamma_to_linear(const vec3& v, float gammaFactor){
+        return vec3(
+            powf(v.getX(), gammaFactor),
+            powf(v.getX(), gammaFactor),
+            powf(v.getX(), gammaFactor));
+    }
 
     inline vec3 random_vector() {
         return vec3(drand48(), drand48(), drand48());
@@ -60,6 +77,21 @@ namespace rayt {
         } while (lengthSqr(p) >= 1.f);
         return p;
     }
+
+    class ImageFilter {
+    public:
+        virtual vec3 filter(const vec3& c) const = 0;
+    };
+
+    class GammaFilter : public ImageFilter {
+    public:
+        GammaFilter(float factor) : m_factor(factor) {}
+        virtual vec3 filter(const vec3& c) const override {
+            return linear_to_gamma(c, m_factor);
+        }
+    private:
+        float m_factor;
+    };
 
     class Image {
     public:
@@ -74,6 +106,7 @@ namespace rayt {
             m_width = w;
             m_height = h;
             m_pixels.reset(new rgb[m_width * m_height]);
+            m_filters.push_back(std::make_unique<GammaFilter>(GAMMA_FACTOR));
         }
 
         int width() const { return m_width; }
@@ -81,16 +114,21 @@ namespace rayt {
         void* pixels() const { return m_pixels.get(); }
 
         void write(int x, int y, float r, float g, float b) {
+            vec3 c(r, g, b);
+            for (auto& f : m_filters) {
+                c = f->filter(c);
+            }
             int index = m_width * y + x;
-            m_pixels[index].r = static_cast<unsigned char>(r * 255.99f);
-            m_pixels[index].g = static_cast<unsigned char>(g * 255.99f);
-            m_pixels[index].b = static_cast<unsigned char>(b * 255.99f);
+            m_pixels[index].r = static_cast<unsigned char>(c.getX() * 255.99f);
+            m_pixels[index].g = static_cast<unsigned char>(c.getY() * 255.99f);
+            m_pixels[index].b = static_cast<unsigned char>(c.getZ() * 255.99f);
         }
 
     private:
         int m_width;
         int m_height;
         std::unique_ptr<rgb[]> m_pixels;
+        std::vector< std::unique_ptr<ImageFilter> > m_filters;
     };
 
     class Ray {
@@ -142,8 +180,3 @@ namespace rayt {
 }
 
  // namespace rayt
-
-
-
-
-    

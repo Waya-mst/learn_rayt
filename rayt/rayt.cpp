@@ -117,7 +117,7 @@ namespace rayt {
         vec3 color(const rayt::Ray& r, const Shape* world) const {
             HitRec hrec;
 
-            if (world->hit(r, 0, FLT_MAX, hrec)) {
+            if (world->hit(r, 0.001, FLT_MAX, hrec)) {
                 vec3 target = hrec.p + hrec.n + random_in_unit_sphere();
                 return 0.5f * color(Ray(hrec.p, target - hrec.p), world);
             }
