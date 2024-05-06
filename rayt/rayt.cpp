@@ -3,13 +3,45 @@
 namespace rayt {
 
     class Shape;
+    class Material;
     typedef std::shared_ptr<Shape> ShapePtr;
+    typedef std::shared_ptr<Material> MaterialPtr;
 
     class HitRec {
     public:
         float t; //光線のパラメタ
         vec3 p; //衝突した位置
         vec3 n; //衝突した点における法線
+        MaterialPtr mat;
+    };
+
+    class ScatterRec {
+    public:
+        Ray ray;
+        vec3 albedo;
+    };
+
+    class Material {
+    public:
+        virtual bool scatter(const Ray& r, const HitRec& hrec, ScatterRec& srec) const = 0;
+    };
+
+    class Lambertian : public Material {
+    public:
+        Lambertian(const vec3& c)
+            : m_albedo(c) {
+        }
+
+        virtual bool scatter(const Ray& r, const HitRec& hrec, ScatterRec& srec) const override {
+            vec3 target = hrec.p + hrec.n + random_in_unit_sphere();
+            srec.ray = Ray(hrec.p, target - hrec.p);
+            srec.albedo = m_albedo;
+            return true;
+        };
+
+    private:
+        vec3 m_albedo;
+
     };
 
     class Shape {
@@ -47,9 +79,11 @@ namespace rayt {
     class Sphere : public Shape {
     public:
         Sphere() {}
-        Sphere(const vec3& c, float r)
+        Sphere(const vec3& c, float r, const MaterialPtr& mat)
             :m_center(c)
-            , m_radius(r) {}
+            ,m_radius(r)
+            ,m_material(mat) {
+        }
 
         virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const override {
             vec3 oc = r.origin() - m_center;
@@ -65,6 +99,7 @@ namespace rayt {
                     hrec.t = temp;
                     hrec.p = r.at(hrec.t);
                     hrec.n = (hrec.p - m_center) / m_radius;
+                    hrec.mat = m_material;
                     return true;
                 }
                 temp = (-b + root) / (2.0f * a);
@@ -72,6 +107,7 @@ namespace rayt {
                     hrec.t = temp;
                     hrec.p = r.at(hrec.t);
                     hrec.n = (hrec.p - m_center) / m_radius;
+                    hrec.mat = m_material;
                     return true;
                 }
             }
@@ -82,7 +118,7 @@ namespace rayt {
     private:
         vec3 m_center;
         float m_radius;
-
+        MaterialPtr m_material;
 
     };
 
@@ -107,9 +143,17 @@ namespace rayt {
 
             ShapeList* world = new ShapeList();
             world->add(std::make_shared<Sphere>(
-                vec3(0, 0, -1), 0.5f));
+                vec3(0.6, 0, -1), 0.5f,
+                std::make_shared<Lambertian>(vec3(0.1f, 0.2f, 0.5f))));
+
             world->add(std::make_shared<Sphere>(
-                vec3(0, -100.5, -1), 100));
+                vec3(-0.6, 0, -1), 0.5f,
+                std::make_shared<Lambertian>(vec3(0.1f, 0.2f, 0.5f))));
+
+            world->add(std::make_shared<Sphere>(
+                vec3(0, -100.5, -1), 100,
+                std::make_shared<Lambertian>(vec3(0.8f, 0.8f, 0.0f))));
+
             m_world.reset(world);
         }
 
@@ -117,9 +161,14 @@ namespace rayt {
         vec3 color(const rayt::Ray& r, const Shape* world) const {
             HitRec hrec;
 
-            if (world->hit(r, 0.001, FLT_MAX, hrec)) {
-                vec3 target = hrec.p + hrec.n + random_in_unit_sphere();
-                return 0.5f * color(Ray(hrec.p, target - hrec.p), world);
+            if (world->hit(r, 0.001f, FLT_MAX, hrec)) {
+                ScatterRec srec;
+                if (hrec.mat->scatter(r, hrec, srec)) {
+                    return mulPerElem(srec.albedo, color(srec.ray, world));
+                }
+                else {
+                    return vec3(0);
+                }
             }
             return backgroundSky(r.direction());
         }
