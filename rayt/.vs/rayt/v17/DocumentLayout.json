@@ -1,14 +1,13 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\kamee\\Desktop\\workspace\\learn_rayt\\rayt\\",
+  "WorkspaceRootPath": "C:\\Users\\kamee\\workspace\\learn_rayt\\learn_rayt\\rayt\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A7FE5E4A-CC55-49EE-BEA1-AF62F36B8D45}|rayt.vcxproj|C:\\Users\\kamee\\Desktop\\workspace\\learn_rayt\\rayt\\rayt.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{A7FE5E4A-CC55-49EE-BEA1-AF62F36B8D45}|rayt.vcxproj|C:\\Users\\kamee\\workspace\\learn_rayt\\learn_rayt\\rayt\\rayt.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{A7FE5E4A-CC55-49EE-BEA1-AF62F36B8D45}|rayt.vcxproj|solutionrelative:rayt.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A7FE5E4A-CC55-49EE-BEA1-AF62F36B8D45}|rayt.vcxproj|C:\\Users\\kamee\\Desktop\\workspace\\learn_rayt\\rayt\\rayt.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{A7FE5E4A-CC55-49EE-BEA1-AF62F36B8D45}|rayt.vcxproj|solutionrelative:rayt.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A7FE5E4A-CC55-49EE-BEA1-AF62F36B8D45}|rayt.vcxproj|C:\\PROGRAM FILES\\MICROSOFT VISUAL STUDIO\\2022\\COMMUNITY\\VC\\TOOLS\\MSVC\\14.39.33519\\INCLUDE\\XUTILITY||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\stb-master\\stb_image_write.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
@@ -20,20 +19,33 @@
       "VerticalTabListWidth": 100,
       "DocumentGroups": [
         {
-          "DockedWidth": 210,
-          "SelectedChildIndex": 0,
+          "DockedWidth": 237,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "rayt.h",
-              "DocumentMoniker": "C:\\Users\\kamee\\Desktop\\workspace\\learn_rayt\\rayt\\rayt.h",
-              "RelativeDocumentMoniker": "rayt.h",
-              "ToolTip": "C:\\Users\\kamee\\Desktop\\workspace\\learn_rayt\\rayt\\rayt.h",
-              "RelativeToolTip": "rayt.h",
-              "ViewState": "AQIAAAkAAAAAAAAAAAAAAHYAAAAhAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-05-01T08:54:29.663Z",
+              "Title": "xutility",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\include\\xutility",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\include\\xutility",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\include\\xutility",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.39.33519\\include\\xutility",
+              "ViewState": "AQIAAPEAAAAAAAAAAIA2wP4AAAA8AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-05-07T15:37:04.354Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "rayt.cpp",
+              "DocumentMoniker": "C:\\Users\\kamee\\workspace\\learn_rayt\\learn_rayt\\rayt\\rayt.cpp",
+              "RelativeDocumentMoniker": "rayt.cpp",
+              "ToolTip": "C:\\Users\\kamee\\workspace\\learn_rayt\\learn_rayt\\rayt\\rayt.cpp",
+              "RelativeToolTip": "rayt.cpp",
+              "ViewState": "AQIAAJsAAAAAAAAAAAAAAKcAAAA8AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-05-07T14:56:20.762Z",
               "EditorCaption": ""
             },
             {
@@ -47,25 +59,6 @@
               "ViewState": "AQIAAPwCAAAAAAAAAAAIwAsDAAAaAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-04-17T13:09:04.903Z"
-            }
-          ]
-        },
-        {
-          "DockedWidth": 235,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "rayt.cpp",
-              "DocumentMoniker": "C:\\Users\\kamee\\Desktop\\workspace\\learn_rayt\\rayt\\rayt.cpp",
-              "RelativeDocumentMoniker": "rayt.cpp",
-              "ToolTip": "C:\\Users\\kamee\\Desktop\\workspace\\learn_rayt\\rayt\\rayt.cpp",
-              "RelativeToolTip": "rayt.cpp",
-              "ViewState": "AQIAAHsAAAAAAAAAAAAAAJAAAAAwAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-04-30T02:01:51.512Z",
-              "EditorCaption": ""
             }
           ]
         }

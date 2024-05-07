@@ -78,6 +78,10 @@ namespace rayt {
         return p;
     }
 
+    inline vec3 reflect(const vec3& v, const vec3& n) {
+        return v + -(2.f * dot(v, n) * n);
+    }
+
     class ImageFilter {
     public:
         virtual vec3 filter(const vec3& c) const = 0;

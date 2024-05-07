@@ -44,6 +44,23 @@ namespace rayt {
 
     };
 
+    class Metal : public Material {
+    public:
+        Metal(const vec3& c) 
+            : m_albedo(c) {
+        }
+
+        virtual bool scatter(const Ray& r, const HitRec& hrec, ScatterRec& srec) const override {
+            vec3 reflected = hrec.p + reflect(normalize(r.direction()), hrec.n);
+            srec.ray = Ray(hrec.p, reflected - hrec.p);
+            srec.albedo = m_albedo;
+            return dot(srec.ray.direction(), hrec.n) > 0;
+        }
+
+    private:
+        vec3 m_albedo;
+    };
+
     class Shape {
     public:
         virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const = 0;
@@ -148,7 +165,7 @@ namespace rayt {
 
             world->add(std::make_shared<Sphere>(
                 vec3(-0.6, 0, -1), 0.5f,
-                std::make_shared<Lambertian>(vec3(0.1f, 0.2f, 0.5f))));
+                std::make_shared<Metal>(vec3(0.8f, 0.8f, 0.8f))));
 
             world->add(std::make_shared<Sphere>(
                 vec3(0, -100.5, -1), 100,
