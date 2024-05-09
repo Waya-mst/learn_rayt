@@ -41,24 +41,26 @@ namespace rayt {
 
     private:
         vec3 m_albedo;
-
     };
 
     class Metal : public Material {
     public:
-        Metal(const vec3& c) 
-            : m_albedo(c) {
+        Metal(const vec3& c, float fuzz) 
+            : m_albedo(c)
+            , m_fuzz(fuzz){
         }
 
         virtual bool scatter(const Ray& r, const HitRec& hrec, ScatterRec& srec) const override {
-            vec3 reflected = hrec.p + reflect(normalize(r.direction()), hrec.n);
-            srec.ray = Ray(hrec.p, reflected - hrec.p);
+            vec3 reflected = reflect(normalize(r.direction()), hrec.n) ;
+            reflected += m_fuzz * random_in_unit_sphere();
+            srec.ray = Ray(hrec.p, reflected);
             srec.albedo = m_albedo;
             return dot(srec.ray.direction(), hrec.n) > 0;
         }
 
     private:
         vec3 m_albedo;
+        float m_fuzz;
     };
 
     class Shape {
@@ -165,7 +167,7 @@ namespace rayt {
 
             world->add(std::make_shared<Sphere>(
                 vec3(-0.6, 0, -1), 0.5f,
-                std::make_shared<Metal>(vec3(0.8f, 0.8f, 0.8f))));
+                std::make_shared<Metal>(vec3(0.8f, 0.8f, 0.8f), 1.0f)));
 
             world->add(std::make_shared<Sphere>(
                 vec3(0, -100.5, -1), 100,
