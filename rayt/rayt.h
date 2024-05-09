@@ -4,6 +4,7 @@
 #include <vector>
 
 #define NUM_THREAD 8
+#define MAX_DEPTH 50
 
 #include <float.h> 
 #define PI 3.14159265359f

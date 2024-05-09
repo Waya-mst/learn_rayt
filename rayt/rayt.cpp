@@ -167,7 +167,7 @@ namespace rayt {
 
             world->add(std::make_shared<Sphere>(
                 vec3(-0.6, 0, -1), 0.5f,
-                std::make_shared<Metal>(vec3(0.8f, 0.8f, 0.8f), 1.0f)));
+                std::make_shared<Metal>(vec3(0.8f, 0.8f, 0.8f), 0.01f)));
 
             world->add(std::make_shared<Sphere>(
                 vec3(0, -100.5, -1), 100,
@@ -177,13 +177,13 @@ namespace rayt {
         }
 
 
-        vec3 color(const rayt::Ray& r, const Shape* world) const {
+        vec3 color(const rayt::Ray& r, const Shape* world, int depth) {
             HitRec hrec;
 
             if (world->hit(r, 0.001f, FLT_MAX, hrec)) {
                 ScatterRec srec;
-                if (hrec.mat->scatter(r, hrec, srec)) {
-                    return mulPerElem(srec.albedo, color(srec.ray, world));
+                if (depth < MAX_DEPTH && hrec.mat->scatter(r, hrec, srec)) {
+                    return mulPerElem(srec.albedo, color(srec.ray, world, depth + 1));
                 }
                 else {
                     return vec3(0);
@@ -216,7 +216,7 @@ namespace rayt {
                         float u = (float(i) + drand48()) / float(nx);
                         float v = (float(j) + drand48()) / float(ny);
                         Ray r = m_camera->getRay(u, v);
-                        c += color(r, m_world.get());
+                        c += color(r, m_world.get(), 49);
                     }
                     c /= m_samples;
                     m_image->write(i, (ny - j - 1), c.getX(), c.getY(), c.getZ());
