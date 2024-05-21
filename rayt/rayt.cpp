@@ -63,6 +63,42 @@ namespace rayt {
         float m_fuzz;
     };
 
+    class Dielectric : public Material {
+    public:
+        Dielectric(float ri)
+            : m_ri(ri) {
+
+        }
+
+        virtual bool scatter(const Ray& r, const HitRec& hrec, ScatterRec& srec) const override {
+            vec3 outward_normal;
+            vec3 reflected = reflect(r.direction(), hrec.n);
+            float ni_over_nt;
+            if (dot(r.direction(), hrec.n) > 0) {
+                outward_normal = -hrec.n;
+                ni_over_nt = m_ri;
+            }
+            else {
+                outward_normal = hrec.n;
+                ni_over_nt = recip(m_ri);
+            }
+
+            srec.albedo = vec3(1);
+
+            vec3 refracted;
+            if (refract(-r.direction(), outward_normal, ni_over_nt, refracted)) {
+                srec.ray = Ray(hrec.p, refracted);
+            }
+            else {
+                srec.ray = Ray(hrec.p, reflected);
+                return false;
+            }
+        }
+
+    private:
+        float m_ri;
+    };
+
     class Shape {
     public:
         virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const = 0;
@@ -167,7 +203,11 @@ namespace rayt {
 
             world->add(std::make_shared<Sphere>(
                 vec3(-0.6, 0, -1), 0.5f,
-                std::make_shared<Metal>(vec3(0.8f, 0.8f, 0.8f), 0.01f)));
+                std::make_shared<Dielectric>(1.5f)));
+
+            world->add(std::make_shared<Sphere>(
+                vec3(-0.6, -0.35, -0.8f), 0.15f,
+                std::make_shared<Metal>(vec3(0.8f, 0.8f, 0.8f), 0.2f)));
 
             world->add(std::make_shared<Sphere>(
                 vec3(0, -100.5, -1), 100,
@@ -216,7 +256,7 @@ namespace rayt {
                         float u = (float(i) + drand48()) / float(nx);
                         float v = (float(j) + drand48()) / float(ny);
                         Ray r = m_camera->getRay(u, v);
-                        c += color(r, m_world.get(), 49);
+                        c += color(r, m_world.get(), 20);
                     }
                     c /= m_samples;
                     m_image->write(i, (ny - j - 1), c.getX(), c.getY(), c.getZ());

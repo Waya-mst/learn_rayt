@@ -48,9 +48,20 @@ typedef Vector3 col3;
 
 
 
-
-
 namespace rayt {
+
+    inline bool refract(const vec3& v, const vec3& n, float ni_over_nt, vec3& refracted) {
+        vec3 uv = normalize(v);
+        float dt = dot(uv, n);
+        float D = 1.f - pow2(ni_over_nt) * (1.f - pow2(dt));
+        if (D > 0.f) {
+            refracted = -ni_over_nt * (uv - n * dt) - n * sqrt(D);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
     inline vec3 linear_to_gamma(const vec3& v, float gammaFactor) {
         float recipGammaFactor = recip(gammaFactor);
