@@ -2,3 +2,6 @@ rayt.sln
 rayt.vcxproj
 rayt.vcxproj.filters
 rayt.vcxproj.user
+.vs/
+rayt/
+x64/

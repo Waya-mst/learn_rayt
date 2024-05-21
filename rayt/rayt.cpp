@@ -207,7 +207,7 @@ namespace rayt {
 
             world->add(std::make_shared<Sphere>(
                 vec3(-0.6, -0.35, -0.8f), 0.15f,
-                std::make_shared<Metal>(vec3(0.8f, 0.8f, 0.8f), 0.2f)));
+                std::make_shared<Metal>(vec3(0.8f, 0.8f, 0.8f), 0.1f)));
 
             world->add(std::make_shared<Sphere>(
                 vec3(0, -100.5, -1), 100,
