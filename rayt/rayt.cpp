@@ -74,25 +74,36 @@ namespace rayt {
             vec3 outward_normal;
             vec3 reflected = reflect(r.direction(), hrec.n);
             float ni_over_nt;
+            float reflect_prob;
+            float cosine;
             if (dot(r.direction(), hrec.n) > 0) {
                 outward_normal = -hrec.n;
                 ni_over_nt = m_ri;
+                cosine = m_ri * dot(r.direction(), hrec.n) / length(r.direction());
             }
             else {
                 outward_normal = hrec.n;
                 ni_over_nt = recip(m_ri);
+                cosine = -dot(r.direction(), hrec.n) / length(r.direction());
             }
 
             srec.albedo = vec3(1);
 
             vec3 refracted;
             if (refract(-r.direction(), outward_normal, ni_over_nt, refracted)) {
-                srec.ray = Ray(hrec.p, refracted);
+                reflect_prob = schlick(cosine, m_ri);
             }
             else {
-                srec.ray = Ray(hrec.p, reflected);
-                return false;
+                reflect_prob = 1;
             }
+
+            if (drand48() < reflect_prob) {
+                srec.ray = Ray(hrec.p, reflected);
+            }
+            else {
+                srec.ray = Ray(hrec.p, refracted);
+            }
+            return true;
         }
 
     private:
@@ -200,19 +211,18 @@ namespace rayt {
             world->add(std::make_shared<Sphere>(
                 vec3(0.6, 0, -1), 0.5f,
                 std::make_shared<Lambertian>(vec3(0.1f, 0.2f, 0.5f))));
-
             world->add(std::make_shared<Sphere>(
                 vec3(-0.6, 0, -1), 0.5f,
                 std::make_shared<Dielectric>(1.5f)));
-
             world->add(std::make_shared<Sphere>(
-                vec3(-0.6, -0.35, -0.8f), 0.15f,
-                std::make_shared<Metal>(vec3(0.8f, 0.8f, 0.8f), 0.1f)));
-
+                vec3(-0.6, 0, -1), -0.45f,
+                std::make_shared<Dielectric>(1.5f)));
+            world->add(std::make_shared<Sphere>(
+                vec3(0, -0.35, -0.8f), 0.15f,
+                std::make_shared<Metal>(vec3(0.8f, 0.8f, 0.8f), 0.2f)));
             world->add(std::make_shared<Sphere>(
                 vec3(0, -100.5, -1), 100,
                 std::make_shared<Lambertian>(vec3(0.8f, 0.8f, 0.0f))));
-
             m_world.reset(world);
         }
 
@@ -256,7 +266,7 @@ namespace rayt {
                         float u = (float(i) + drand48()) / float(nx);
                         float v = (float(j) + drand48()) / float(ny);
                         Ray r = m_camera->getRay(u, v);
-                        c += color(r, m_world.get(), 20);
+                        c += color(r, m_world.get(), 0);
                     }
                     c /= m_samples;
                     m_image->write(i, (ny - j - 1), c.getX(), c.getY(), c.getZ());

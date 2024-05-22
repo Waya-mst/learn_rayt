@@ -50,6 +50,11 @@ typedef Vector3 col3;
 
 namespace rayt {
 
+    inline float schlick(float cosine, float ri) {
+        float r0 = pow2((1.f - ri) / (1.f + ri));
+        return r0 + (1.f - r0) * pow5((1 - cosine));
+    }
+
     inline bool refract(const vec3& v, const vec3& n, float ni_over_nt, vec3& refracted) {
         vec3 uv = normalize(v);
         float dt = dot(uv, n);

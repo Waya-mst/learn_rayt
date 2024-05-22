@@ -1,9 +1,9 @@
 ﻿  rayt.cpp
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(201,22): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(205,23): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(209,29): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(209,23): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(261,26): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(212,22): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(215,23): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(218,23): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(221,26): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(271,26): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82): warning C4244: '引数': '_Ty' から 'float' への変換です。データが失われる可能性があります。
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82): warning C4244:         with
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82): warning C4244:         [
@@ -12,7 +12,7 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.3351
   (ソース ファイル 'rayt.cpp' をコンパイルしています)
   C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82):
   テンプレートインスタンス化コンテキスト (最初に最も古いもの) は
-  	C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(212,29):
+  	C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(223,29):
   	コンパイル対象の関数 テンプレート インスタンス化 'std::shared_ptr<rayt::Sphere> std::make_shared<rayt::Sphere,vec3,int,std::shared_ptr<rayt::Lambertian>>(vec3 &&,int &&,std::shared_ptr<rayt::Lambertian> &&)' のリファレンスを確認してください
   	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\memory(2738,46):
   	コンパイル対象の関数 テンプレート インスタンス化 'std::_Ref_count_obj2<rayt::Sphere>::_Ref_count_obj2<_Ty,int,std::shared_ptr<rayt::Lambertian>>(_Ty &&,int &&,std::shared_ptr<rayt::Lambertian> &&)' のリファレンスを確認してください
@@ -27,5 +27,4 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.3351
               _Ty=rayt::Sphere
           ]
   
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(96,1): warning C4715: 'rayt::Dielectric::scatter': 値を返さないコントロール パスがあります。
   rayt.vcxproj -> C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\x64\Debug\rayt.exe
