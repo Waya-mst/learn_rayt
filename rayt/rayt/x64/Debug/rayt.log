@@ -1,7 +1,22 @@
 ﻿  rayt.cpp
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(214,22): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(218,23): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(272,26): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.h(80,19): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+  (ソース ファイル 'rayt.cpp' をコンパイルしています)
+  
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.h(81,19): warning C4244: '初期化中': 'double' から 'int' への変換です。データが失われる可能性があります。
+  (ソース ファイル 'rayt.cpp' をコンパイルしています)
+  
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.h(91,60): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+  (ソース ファイル 'rayt.cpp' をコンパイルしています)
+  
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.h(90,60): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+  (ソース ファイル 'rayt.cpp' をコンパイルしています)
+  
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.h(89,56): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+  (ソース ファイル 'rayt.cpp' をコンパイルしています)
+  
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(218,22): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(222,23): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(276,26): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82): warning C4244: '引数': '_Ty' から 'float' への変換です。データが失われる可能性があります。
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82): warning C4244:         with
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82): warning C4244:         [
@@ -10,7 +25,7 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.3351
   (ソース ファイル 'rayt.cpp' をコンパイルしています)
   C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82):
   テンプレートインスタンス化コンテキスト (最初に最も古いもの) は
-  	C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(221,29):
+  	C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(225,29):
   	コンパイル対象の関数 テンプレート インスタンス化 'std::shared_ptr<rayt::Sphere> std::make_shared<rayt::Sphere,vec3,int,std::shared_ptr<rayt::Lambertian>>(vec3 &&,int &&,std::shared_ptr<rayt::Lambertian> &&)' のリファレンスを確認してください
   	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\memory(2738,46):
   	コンパイル対象の関数 テンプレート インスタンス化 'std::_Ref_count_obj2<rayt::Sphere>::_Ref_count_obj2<_Ty,int,std::shared_ptr<rayt::Lambertian>>(_Ty &&,int &&,std::shared_ptr<rayt::Lambertian> &&)' のリファレンスを確認してください

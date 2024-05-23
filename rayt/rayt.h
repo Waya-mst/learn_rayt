@@ -50,12 +50,51 @@ typedef Vector3 col3;
 
 namespace rayt {
 
+    inline void get_sphere_uv(const vec3& p, float& u, float& v) {
+        float phi = atan2(p.getZ(), p.getX());
+        float theta = asin(p.getY());
+        u = 1.f - (phi + PI) / (2.f * PI);
+        v = (theta + PI / 2.f) / PI;
+    }
+
     class Texture;
     typedef std::shared_ptr<Texture> TexturePtr;
 
     class Texture {
     public:
         virtual vec3 value(float u, float v, const vec3& p) const = 0;
+    };
+
+    class ImageTexture : public Texture {
+    public:
+        ImageTexture(const char* name) {
+            int nn;
+            m_texels = stbi_load(name, &m_width, &m_height, &nn, 0);
+        }
+
+        virtual ~ImageTexture() {
+            stbi_image_free(m_texels);
+        }
+
+        virtual vec3 value(float u, float v, const vec3& p) const override {
+            int i = (u)*m_width;
+            int j = (1 - v) * m_height - 0.001;
+            return sample(i, j);
+        }
+
+        vec3 sample(int u, int v) const {
+            u = u < 0 ? 0 : u >= m_width ? m_width - 1 : u;
+            v = v < 0 ? 0 : v >= m_height ? m_height - 1 : v;
+            return vec3(
+                int(m_texels[3 * u + 3 * m_width * v]) / 255.0,
+                int(m_texels[3 * u + 3 * m_width * v + 1]) / 255.0,
+                int(m_texels[3 * u + 3 * m_width * v + 2]) / 255.0);
+        }
+
+    private:
+        int m_width;
+        int m_height;
+        unsigned char* m_texels;
     };
 
     class ColorTexture : public Texture {

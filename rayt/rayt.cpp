@@ -112,6 +112,8 @@ namespace rayt {
         float m_ri;
     };
 
+
+
     class Shape {
     public:
         virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const = 0;
@@ -168,6 +170,7 @@ namespace rayt {
                     hrec.p = r.at(hrec.t);
                     hrec.n = (hrec.p - m_center) / m_radius;
                     hrec.mat = m_material;
+                    get_sphere_uv(hrec.n, hrec.u, hrec.v);
                     return true;
                 }
                 temp = (-b + root) / (2.0f * a);
@@ -176,6 +179,7 @@ namespace rayt {
                     hrec.p = r.at(hrec.t);
                     hrec.n = (hrec.p - m_center) / m_radius;
                     hrec.mat = m_material;
+                    get_sphere_uv(hrec.n, hrec.u, hrec.v);
                     return true;
                 }
             }
@@ -213,7 +217,7 @@ namespace rayt {
             world->add(std::make_shared<Sphere>(
                 vec3(0.6, 0, -1), 0.5f,
                 std::make_shared<Lambertian>(
-                    std::make_shared<ColorTexture>(vec3(0.1f, 0.2f, 0.5f)))));
+                    std::make_shared<ImageTexture>("./assets/brick_diffuse.jpg"))));
             world->add(std::make_shared<Sphere>(
                 vec3(-0.6, 0, -1), 0.5f,
                 std::make_shared<Metal>(
