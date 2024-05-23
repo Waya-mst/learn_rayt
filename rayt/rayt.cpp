@@ -47,7 +47,6 @@ namespace rayt {
         TexturePtr m_emit;
     };
 
-
     class Lambertian : public Material {
     public:
         Lambertian(const TexturePtr& a)
@@ -166,6 +165,59 @@ namespace rayt {
         std::vector<ShapePtr> m_list;
     };
 
+    class Rect : public Shape {
+    public:
+        enum AxisType {
+            kXY = 0,
+            kXZ,
+            kYZ
+        };
+        Rect(){}
+        Rect(float x0, float x1, float y0, float y1, float k, AxisType axis, const MaterialPtr& m)
+            : m_x0(x0)
+            , m_x1(x1)
+            , m_y0(y0)
+            , m_y1(y1)
+            , m_k(k)
+            , m_axis(axis)
+            , m_material(m) {
+        }
+
+        virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const override {
+            int xi, yi, zi;
+            vec3 axis;
+            switch (m_axis) {
+            case kXY: xi = 0; yi = 1; zi = 2; axis = vec3::zAxis(); break;
+            case kXZ: xi = 0; yi = 2; zi = 1; axis = vec3::yAxis(); break;
+            case kYZ: xi = 1; yi = 2; zi = 0; axis = vec3::xAxis(); break;
+            }
+
+            float t = (m_k - r.origin()[zi]) / r.direction()[zi];
+            if (t < t0 || t > t1) {
+                return false;
+            }
+
+            float x = r.origin()[xi] + t * r.direction()[xi];
+            float y = r.origin()[yi] + t * r.direction()[yi];
+            if (x < m_x0 || x > m_x1 || y < m_y0 || y > m_y1) {
+                return false;
+            }
+
+            hrec.u = (x - m_x0) / (m_x1 - m_x0);
+            hrec.v = (y - m_y0) / (m_y1 - m_y0);
+            hrec.t = t;
+            hrec.mat = m_material;
+            hrec.p = r.at(t);
+            hrec.n = axis;
+            return true;
+
+        }
+    private:
+        float m_x0, m_x1, m_y0, m_y1, m_k;
+        AxisType m_axis;
+        MaterialPtr m_material;
+    };
+
     class Sphere : public Shape {
     public:
         Sphere() {}
@@ -218,7 +270,7 @@ namespace rayt {
     public:
         Scene(int width, int height, int samples)
             : m_image(std::make_unique<Image>(width, height))
-            , m_backColor(0.2f)
+            , m_backColor(0.1f)
             , m_samples(samples) {
 
         }
@@ -226,31 +278,27 @@ namespace rayt {
         void build() {
             // camera
 
-            vec3 w(-2.0f, -1.0f, -1.0f);
-            vec3 u(4.0f, 0.0f, 0.0f);
-            vec3 v(0.0f, 2.0f, 0.0f);
-            m_camera = std::make_unique<Camera>(u, v, w);
+            vec3 lookfrom(13, 2, 3);
+            vec3 lookat(0, 1, 0);
+            vec3 vup(0, 1, 0);
+            float aspect = float(m_image->width()) / float(m_image->height());
+            m_camera = std::make_unique<Camera>(lookfrom, lookat, vup, 30, aspect);
 
             // Shapes
 
             ShapeList* world = new ShapeList();
             world->add(std::make_shared<Sphere>(
-                vec3(0.6, 0, -1), 0.5f,
-                std::make_shared<DiffuseLight>(
-                    std::make_shared<ColorTexture>(vec3(1)))));
-
-            world->add(std::make_shared<Sphere>(
-                vec3(-0.6, 0, -1), 0.5f,
-                std::make_shared<Metal>(
-                    std::make_shared<ColorTexture>(vec3(0.8f, 0.8f, 0.8f)), 0.4f)));
-
-            world->add(std::make_shared<Sphere>(
-                vec3(0, -100.5, -1), 100,
+                vec3(0, 2, 0), 2,
                 std::make_shared<Lambertian>(
-                    std::make_shared<CheckerTexture>(
-                        std::make_shared<ColorTexture>(vec3(0.8f, 0.8f, 0.0f)),
-                        std::make_shared<ColorTexture>(vec3(0.8f, 0.2f, 0.0f)), 10.f))));
-
+                    std::make_shared<ColorTexture>(vec3(0.5f, 0.5f, 0.5f)))));
+            world->add(std::make_shared<Sphere>(
+                vec3(0, -1000, 0), 1000,
+                std::make_shared<Lambertian>(
+                    std::make_shared<ColorTexture>(vec3(0.8f, 0.8f, 0.8f)))));
+            world->add(std::make_shared<Rect>(
+                3, 5, 1, 3, -2, Rect::kXY,
+                std::make_shared<DiffuseLight>(
+                    std::make_shared<ColorTexture>(vec3(4)))));
             m_world.reset(world);
         }
 
@@ -268,7 +316,7 @@ namespace rayt {
                     return emitted;
                 }
             }
-            return backgroundSky(r.direction());
+            return background(r.direction());
         }
 
         vec3 background(const vec3& d) const {
@@ -287,7 +335,7 @@ namespace rayt {
             int nx = m_image->width();
             int ny = m_image->height();
 #pragma omp parallel for schedule(dynamic, 1) num_threads(NUM_THREAD)
-            for (int j = 0; j < ny; ++j) {
+            for (int j = 0; j < ny; j++) {
                 std::cerr << "Rendering (y = " << j << ") " << (100.0 * j / (ny - 1)) << "%" << std::endl;
                 for (int i = 0; i < nx; ++i) {
                     vec3 c(0);
@@ -318,7 +366,7 @@ int main()
 {
     int nx = 200;
     int ny = 100;
-    int ns = 100;
+    int ns = 500;
     std::unique_ptr<rayt::Scene> scene(std::make_unique<rayt::Scene>(nx, ny, ns));
 
     scene->render();

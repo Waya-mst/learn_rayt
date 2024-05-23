@@ -2,6 +2,7 @@
 #include <memory>
 #include <iostream>
 #include <vector>
+#include<algorithm>
 
 #define NUM_THREAD 8
 #define MAX_DEPTH 50
@@ -35,6 +36,9 @@ inline float smoothstep(float a, float b, float t) {
 }
 inline float radians(float deg) { return (deg / 180.f) * PI; }
 inline float degrees(float rad) { return (rad / PI) * 180.f; }
+inline float nearyeq(float a, float b, float eps = EPSILON) { return fabsf(a - b) <= eps; }
+inline float iszero(float a) { return fabsf(a) <= EPSILON; };
+inline float safe_recip(float x) { return 1.f / (x + EPSILON); }
 #include <vectormath/scalar/cpp/vectormath_aos.h>
 using namespace Vectormath::Aos;
 
@@ -50,94 +54,23 @@ typedef Vector3 col3;
 
 namespace rayt {
 
-    inline void get_sphere_uv(const vec3& p, float& u, float& v) {
-        float phi = atan2(p.getZ(), p.getX());
-        float theta = asin(p.getY());
-        u = 1.f - (phi + PI) / (2.f * PI);
-        v = (theta + PI / 2.f) / PI;
+    inline vec3 linear_to_gamma(const vec3& v, float gammaFactor) {
+        float recipGammaFactor = recip(gammaFactor);
+        return vec3(
+            powf(v.getX(), recipGammaFactor),
+            powf(v.getY(), recipGammaFactor),
+            powf(v.getZ(), recipGammaFactor));
     }
 
-    class Texture;
-    typedef std::shared_ptr<Texture> TexturePtr;
+    inline vec3 gamma_to_linear(const vec3& v, float gammaFactor) {
+        return vec3(
+            powf(v.getX(), gammaFactor),
+            powf(v.getX(), gammaFactor),
+            powf(v.getX(), gammaFactor));
+    }
 
-    class Texture {
-    public:
-        virtual vec3 value(float u, float v, const vec3& p) const = 0;
-    };
-
-    class ImageTexture : public Texture {
-    public:
-        ImageTexture(const char* name) {
-            int nn;
-            m_texels = stbi_load(name, &m_width, &m_height, &nn, 0);
-        }
-
-        virtual ~ImageTexture() {
-            stbi_image_free(m_texels);
-        }
-
-        virtual vec3 value(float u, float v, const vec3& p) const override {
-            int i = (u)*m_width;
-            int j = (1 - v) * m_height - 0.001;
-            return sample(i, j);
-        }
-
-        vec3 sample(int u, int v) const {
-            u = u < 0 ? 0 : u >= m_width ? m_width - 1 : u;
-            v = v < 0 ? 0 : v >= m_height ? m_height - 1 : v;
-            return vec3(
-                int(m_texels[3 * u + 3 * m_width * v]) / 255.0,
-                int(m_texels[3 * u + 3 * m_width * v + 1]) / 255.0,
-                int(m_texels[3 * u + 3 * m_width * v + 2]) / 255.0);
-        }
-
-    private:
-        int m_width;
-        int m_height;
-        unsigned char* m_texels;
-    };
-
-    class ColorTexture : public Texture {
-    public:
-        ColorTexture(const vec3& c) 
-            : m_color(c) {
-        }
-
-        virtual vec3 value(float u, float v, const vec3& p) const override {
-            return m_color;
-        }
-    private:
-        vec3 m_color;
-    };
-
-    class CheckerTexture : public Texture {
-    public:
-        CheckerTexture(const TexturePtr& t0, const TexturePtr& t1, float freq)
-            : m_odd(t0)
-            , m_even(t1)
-            , m_freq(freq) {
-        }
-
-        virtual vec3 value(float u, float v, const vec3& p) const override{
-            float sines = sinf((m_freq * p.getX())) * sinf(m_freq * p.getY()) * sinf(m_freq * p.getZ());
-            if (sines < 0) {
-                return m_odd->value(u, v, p);
-            }
-            else {
-                return m_even->value(u, v, p);
-            }
-        }
-
-    private:
-        TexturePtr m_odd;
-        TexturePtr m_even;
-        float m_freq;
- 
-    };
-
-    inline float schlick(float cosine, float ri) {
-        float r0 = pow2((1.f - ri) / (1.f + ri));
-        return r0 + (1.f - r0) * pow5((1 - cosine));
+    inline vec3 reflect(const vec3& v, const vec3& n) {
+        return v + -(2.f * dot(v, n) * n);
     }
 
     inline bool refract(const vec3& v, const vec3& n, float ni_over_nt, vec3& refracted) {
@@ -153,19 +86,16 @@ namespace rayt {
         }
     }
 
-    inline vec3 linear_to_gamma(const vec3& v, float gammaFactor) {
-        float recipGammaFactor = recip(gammaFactor);
-        return vec3(
-            powf(v.getX(), recipGammaFactor),
-            powf(v.getY(), recipGammaFactor),
-            powf(v.getZ(), recipGammaFactor));
+    inline float schlick(float cosine, float ri) {
+        float r0 = pow2((1.f - ri) / (1.f + ri));
+        return r0 + (1.f - r0) * pow5((1.f - cosine));
     }
 
-    inline vec3 gamma_to_linear(const vec3& v, float gammaFactor){
-        return vec3(
-            powf(v.getX(), gammaFactor),
-            powf(v.getX(), gammaFactor),
-            powf(v.getX(), gammaFactor));
+    inline void get_sphere_uv(const vec3& p, float& u, float& v) {
+        float phi = atan2(p.getZ(), p.getX());
+        float theta = asin(p.getY());
+        u = 1.f - (phi + PI) / (2.f * PI);
+        v = (theta + PI / 2.f) / PI;
     }
 
     inline vec3 random_vector() {
@@ -178,10 +108,6 @@ namespace rayt {
             p = 2.f * random_vector() - vec3(1.f);
         } while (lengthSqr(p) >= 1.f);
         return p;
-    }
-
-    inline vec3 reflect(const vec3& v, const vec3& n) {
-        return v + -(2.f * dot(v, n) * n);
     }
 
     class ImageFilter {
@@ -269,7 +195,7 @@ namespace rayt {
             m_origin = lookfrom;
             w = normalize(lookfrom - lookat);
             u = normalize(cross(vup, w));
-            w = cross(w, u);
+            v = cross(w, u);
             m_uvw[2] = m_origin - halfW * u - halfH * v - w;
             m_uvw[0] = 2.0f * halfW * u;
             m_uvw[1] = 2.0f * halfH * v;
@@ -283,6 +209,86 @@ namespace rayt {
         vec3 m_origin;
         vec3 m_uvw[3];
     };
+
+    class Texture;
+    typedef std::shared_ptr<Texture> TexturePtr;
+
+    class Texture {
+    public:
+        virtual vec3 value(float u, float v, const vec3& p) const = 0;
+    };
+
+    class ImageTexture : public Texture {
+    public:
+        ImageTexture(const char* name) {
+            int nn;
+            m_texels = stbi_load(name, &m_width, &m_height, &nn, 0);
+        }
+
+        virtual ~ImageTexture() {
+            stbi_image_free(m_texels);
+        }
+
+        virtual vec3 value(float u, float v, const vec3& p) const override {
+            int i = (u)*m_width;
+            int j = (1 - v) * m_height - 0.001;
+            return sample(i, j);
+        }
+
+        vec3 sample(int u, int v) const {
+            u = u < 0 ? 0 : u >= m_width ? m_width - 1 : u;
+            v = v < 0 ? 0 : v >= m_height ? m_height - 1 : v;
+            return vec3(
+                int(m_texels[3 * u + 3 * m_width * v]) / 255.0,
+                int(m_texels[3 * u + 3 * m_width * v + 1]) / 255.0,
+                int(m_texels[3 * u + 3 * m_width * v + 2]) / 255.0);
+        }
+
+    private:
+        int m_width;
+        int m_height;
+        unsigned char* m_texels;
+    };
+
+    class ColorTexture : public Texture {
+    public:
+        ColorTexture(const vec3& c) 
+            : m_color(c) {
+        }
+
+        virtual vec3 value(float u, float v, const vec3& p) const override {
+            return m_color;
+        }
+    private:
+        vec3 m_color;
+    };
+
+    class CheckerTexture : public Texture {
+    public:
+        CheckerTexture(const TexturePtr& t0, const TexturePtr& t1, float freq)
+            : m_odd(t0)
+            , m_even(t1)
+            , m_freq(freq) {
+        }
+
+        virtual vec3 value(float u, float v, const vec3& p) const override{
+            float sines = sinf((m_freq * p.getX())) * sinf(m_freq * p.getY()) * sinf(m_freq * p.getZ());
+            if (sines < 0) {
+                return m_odd->value(u, v, p);
+            }
+            else {
+                return m_even->value(u, v, p);
+            }
+        }
+
+    private:
+        TexturePtr m_odd;
+        TexturePtr m_even;
+        float m_freq;
+ 
+    };
+
+    
 }
 
  // namespace rayt
