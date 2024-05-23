@@ -20,7 +20,7 @@
       "VerticalTabListWidth": 100,
       "DocumentGroups": [
         {
-          "DockedWidth": 336,
+          "DockedWidth": 327,
           "SelectedChildIndex": 0,
           "Children": [
             {
@@ -31,7 +31,7 @@
               "RelativeDocumentMoniker": "rayt.cpp",
               "ToolTip": "C:\\Users\\kamee\\workspace\\learn_rayt\\learn_rayt\\rayt\\rayt.cpp",
               "RelativeToolTip": "rayt.cpp",
-              "ViewState": "AQIAAMYAAAAAAAAAAAAYwOAAAAAhAAAA",
+              "ViewState": "AQIAANAAAAAAAAAAAIAwwOAAAABPAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-05-07T14:56:20.762Z",
               "EditorCaption": ""
@@ -51,7 +51,7 @@
           ]
         },
         {
-          "DockedWidth": 101,
+          "DockedWidth": 110,
           "SelectedChildIndex": 0,
           "Children": [
             {
@@ -60,9 +60,9 @@
               "Title": "rayt.h",
               "DocumentMoniker": "C:\\Users\\kamee\\workspace\\learn_rayt\\learn_rayt\\rayt\\rayt.h",
               "RelativeDocumentMoniker": "rayt.h",
-              "ToolTip": "C:\\Users\\kamee\\workspace\\learn_rayt\\learn_rayt\\rayt\\rayt.h*",
-              "RelativeToolTip": "rayt.h*",
-              "ViewState": "AQIAAC0AAAAAAAAAAAAAADoAAAAGAAAA",
+              "ToolTip": "C:\\Users\\kamee\\workspace\\learn_rayt\\learn_rayt\\rayt\\rayt.h",
+              "RelativeToolTip": "rayt.h",
+              "ViewState": "AQIAAEsAAAAAAAAAAAAAAF8AAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-05-09T00:34:14.452Z",
               "EditorCaption": ""

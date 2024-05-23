@@ -221,7 +221,9 @@ namespace rayt {
             world->add(std::make_shared<Sphere>(
                 vec3(0, -100.5, -1), 100,
                 std::make_shared<Lambertian>(
-                    std::make_shared<ColorTexture>(vec3(0.8f, 0.8f, 0.0f)))));
+                    std::make_shared<CheckerTexture>(
+                        std::make_shared<ColorTexture>(vec3(0.8f, 0.8f, 0.0f)),
+                        std::make_shared<ColorTexture>(vec3(0.8f, 0.2f, 0.0f)), 10.f))));
             m_world.reset(world);
         }
 

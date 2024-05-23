@@ -1,7 +1,7 @@
 ﻿  rayt.cpp
 C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(214,22): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
 C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(218,23): warning C4305: '引数': 'double' から 'float' へ切り詰めます。
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(270,26): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(272,26): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82): warning C4244: '引数': '_Ty' から 'float' への変換です。データが失われる可能性があります。
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82): warning C4244:         with
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82): warning C4244:         [

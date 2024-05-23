@@ -71,6 +71,31 @@ namespace rayt {
         vec3 m_color;
     };
 
+    class CheckerTexture : public Texture {
+    public:
+        CheckerTexture(const TexturePtr& t0, const TexturePtr& t1, float freq)
+            : m_odd(t0)
+            , m_even(t1)
+            , m_freq(freq) {
+        }
+
+        virtual vec3 value(float u, float v, const vec3& p) const override{
+            float sines = sinf((m_freq * p.getX())) * sinf(m_freq * p.getY()) * sinf(m_freq * p.getZ());
+            if (sines < 0) {
+                return m_odd->value(u, v, p);
+            }
+            else {
+                return m_even->value(u, v, p);
+            }
+        }
+
+    private:
+        TexturePtr m_odd;
+        TexturePtr m_even;
+        float m_freq;
+ 
+    };
+
     inline float schlick(float cosine, float ri) {
         float r0 = pow2((1.f - ri) / (1.f + ri));
         return r0 + (1.f - r0) * pow5((1 - cosine));
