@@ -10,6 +10,8 @@ namespace rayt {
     class HitRec {
     public:
         float t; //光線のパラメタ
+        float u;
+        float v;
         vec3 p; //衝突した位置
         vec3 n; //衝突した点における法線
         MaterialPtr mat;
@@ -28,25 +30,25 @@ namespace rayt {
 
     class Lambertian : public Material {
     public:
-        Lambertian(const vec3& c)
-            : m_albedo(c) {
+        Lambertian(const TexturePtr& a)
+            : m_albedo(a) {
         }
 
         virtual bool scatter(const Ray& r, const HitRec& hrec, ScatterRec& srec) const override {
             vec3 target = hrec.p + hrec.n + random_in_unit_sphere();
             srec.ray = Ray(hrec.p, target - hrec.p);
-            srec.albedo = m_albedo;
+            srec.albedo = m_albedo->value(hrec.u, hrec.v, hrec.p);
             return true;
         };
 
     private:
-        vec3 m_albedo;
+        TexturePtr m_albedo;
     };
 
     class Metal : public Material {
     public:
-        Metal(const vec3& c, float fuzz) 
-            : m_albedo(c)
+        Metal(const TexturePtr& a, float fuzz) 
+            : m_albedo(a)
             , m_fuzz(fuzz){
         }
 
@@ -54,12 +56,12 @@ namespace rayt {
             vec3 reflected = reflect(normalize(r.direction()), hrec.n) ;
             reflected += m_fuzz * random_in_unit_sphere();
             srec.ray = Ray(hrec.p, reflected);
-            srec.albedo = m_albedo;
+            srec.albedo = m_albedo->value(hrec.u, hrec.v, hrec.p);
             return dot(srec.ray.direction(), hrec.n) > 0;
         }
 
     private:
-        vec3 m_albedo;
+        TexturePtr m_albedo;
         float m_fuzz;
     };
 
@@ -210,19 +212,16 @@ namespace rayt {
             ShapeList* world = new ShapeList();
             world->add(std::make_shared<Sphere>(
                 vec3(0.6, 0, -1), 0.5f,
-                std::make_shared<Lambertian>(vec3(0.1f, 0.2f, 0.5f))));
+                std::make_shared<Lambertian>(
+                    std::make_shared<ColorTexture>(vec3(0.1f, 0.2f, 0.5f)))));
             world->add(std::make_shared<Sphere>(
                 vec3(-0.6, 0, -1), 0.5f,
-                std::make_shared<Dielectric>(1.5f)));
-            world->add(std::make_shared<Sphere>(
-                vec3(-0.6, 0, -1), -0.45f,
-                std::make_shared<Dielectric>(1.5f)));
-            world->add(std::make_shared<Sphere>(
-                vec3(0, -0.35, -0.8f), 0.15f,
-                std::make_shared<Metal>(vec3(0.8f, 0.8f, 0.8f), 0.2f)));
+                std::make_shared<Metal>(
+                    std::make_shared<ColorTexture>(vec3(0.8f, 0.8f, 0.8f)), 0.4f)));
             world->add(std::make_shared<Sphere>(
                 vec3(0, -100.5, -1), 100,
-                std::make_shared<Lambertian>(vec3(0.8f, 0.8f, 0.0f))));
+                std::make_shared<Lambertian>(
+                    std::make_shared<ColorTexture>(vec3(0.8f, 0.8f, 0.0f)))));
             m_world.reset(world);
         }
 
