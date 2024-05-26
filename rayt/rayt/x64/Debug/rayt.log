@@ -1,17 +1,17 @@
 ﻿  rayt.cpp
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.h(233,19): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.h(242,19): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
   (ソース ファイル 'rayt.cpp' をコンパイルしています)
   
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.h(234,19): warning C4244: '初期化中': 'double' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.h(243,19): warning C4244: '初期化中': 'double' から 'int' への変換です。データが失われる可能性があります。
   (ソース ファイル 'rayt.cpp' をコンパイルしています)
   
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.h(244,60): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.h(253,60): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
   (ソース ファイル 'rayt.cpp' をコンパイルしています)
   
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.h(243,60): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.h(252,60): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
   (ソース ファイル 'rayt.cpp' をコンパイルしています)
   
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.h(242,56): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.h(251,56): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
   (ソース ファイル 'rayt.cpp' をコンパイルしています)
   
 C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(348,26): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。

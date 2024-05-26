@@ -125,6 +125,14 @@ namespace rayt {
         float m_factor;
     };
 
+    class TonemapFilter : public ImageFilter {
+    public:
+        TonemapFilter() {}
+        virtual vec3 filter(const vec3& c) const override {
+            return minPerElem(maxPerElem(c, Vector3(0.f)), Vector3(1.f));
+        }
+    };
+
     class Image {
     public:
         struct rgb {
@@ -139,6 +147,7 @@ namespace rayt {
             m_height = h;
             m_pixels.reset(new rgb[m_width * m_height]);
             m_filters.push_back(std::make_unique<GammaFilter>(GAMMA_FACTOR));
+            m_filters.push_back(std::make_unique<TonemapFilter>());
         }
 
         int width() const { return m_width; }
