@@ -266,6 +266,59 @@ namespace rayt {
 
     };
 
+    class FlipNormals : public Shape {
+    public:
+        FlipNormals(const ShapePtr& shape) 
+            : m_shape(shape){
+        }
+
+        virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const override {
+            if (m_shape->hit(r, t0, t1, hrec)) {
+                hrec.n = -hrec.n;
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+    private:
+        ShapePtr m_shape;
+    };
+
+    class Box : public Shape {
+    public:
+        Box() {}
+        Box(const vec3& p0, const vec3& p1, const MaterialPtr& m)
+            : m_p0(p0)
+            , m_p1(p1)
+            , m_list(std::make_unique<ShapeList>()) {
+
+            ShapeList* l = new ShapeList();
+            l->add(std::make_shared<Rect>(
+                p0.getX(), p1.getX(), p0.getY(), p1.getY(), p1.getZ(), Rect::kXY, m));
+            l->add(std::make_shared<FlipNormals>(std::make_shared<Rect>(
+                p0.getX(), p1.getX(), p0.getY(), p1.getY(), p0.getZ(), Rect::kXY, m)));
+            l->add(std::make_shared<Rect>(
+                p0.getX(), p1.getX(), p0.getZ(), p1.getZ(), p1.getY(), Rect::kXZ, m));
+            l->add(std::make_shared<FlipNormals>(std::make_shared<Rect>(
+                p0.getX(), p1.getX(), p0.getZ(), p1.getZ(), p0.getY(), Rect::kXZ, m)));
+            l->add(std::make_shared<Rect>(
+                p0.getY(), p1.getY(), p0.getZ(), p1.getZ(), p1.getX(), Rect::kYZ, m));
+            l->add(std::make_shared<FlipNormals>(std::make_shared<Rect>(
+                p0.getY(), p1.getY(), p0.getZ(), p1.getZ(), p0.getX(), Rect::kYZ, m)));
+            m_list.reset(l);
+        }
+
+        virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const override {
+            return m_list->hit(r, t0, t1, hrec);
+        }
+
+    private:
+        vec3 m_p0, m_p1;
+        std::unique_ptr<ShapeList> m_list;
+    };
+
     class Scene {
     public:
         Scene(int width, int height, int samples)
@@ -276,29 +329,55 @@ namespace rayt {
         }
 
         void build() {
-            // camera
 
-            vec3 lookfrom(13, 2, 3);
-            vec3 lookat(0, 1, 0);
+            m_backColor = vec3(0);
+
+            // Camera
+
+            vec3 lookfrom(278, 278, -800);
+            vec3 lookat(278, 278, 0);
             vec3 vup(0, 1, 0);
             float aspect = float(m_image->width()) / float(m_image->height());
-            m_camera = std::make_unique<Camera>(lookfrom, lookat, vup, 30, aspect);
+            m_camera = std::make_unique<Camera>(lookfrom, lookat, vup, 40, aspect);
 
             // Shapes
 
+            MaterialPtr red = std::make_shared<Lambertian>(
+                std::make_shared<ColorTexture>(vec3(0.65f, 0.05f, 0.05f)));
+            MaterialPtr white = std::make_shared<Lambertian>(
+                std::make_shared<ColorTexture>(vec3(0.73f)));
+            MaterialPtr green = std::make_shared<Lambertian>(
+                std::make_shared<ColorTexture>(vec3(0.12f, 0.45f, 0.15f)));
+            MaterialPtr light = std::make_shared<DiffuseLight>(
+                std::make_shared<ColorTexture>(vec3(15.0f)));
+
             ShapeList* world = new ShapeList();
-            world->add(std::make_shared<Sphere>(
-                vec3(0, 2, 0), 2,
-                std::make_shared<Lambertian>(
-                    std::make_shared<ColorTexture>(vec3(0.5f, 0.5f, 0.5f)))));
-            world->add(std::make_shared<Sphere>(
-                vec3(0, -1000, 0), 1000,
-                std::make_shared<Lambertian>(
-                    std::make_shared<ColorTexture>(vec3(0.8f, 0.8f, 0.8f)))));
-            world->add(std::make_shared<Rect>(
-                3, 5, 1, 3, -2, Rect::kXY,
-                std::make_shared<DiffuseLight>(
-                    std::make_shared<ColorTexture>(vec3(4)))));
+            world->add(
+                std::make_shared<FlipNormals>(
+                    std::make_shared<Rect>(
+                        0, 555, 0, 555, 555, Rect::kYZ, green)));
+            world->add(
+                std::make_shared<Rect>(
+                    0, 555, 0, 555, 0, Rect::kYZ, red));
+            world->add(
+                std::make_shared<Rect>(
+                    213, 343, 227, 332, 554, Rect::kXZ, light));
+            world->add(
+                std::make_shared<FlipNormals>(
+                    std::make_shared<Rect>(
+                        0, 555, 0, 555, 555, Rect::kXZ, white)));
+            world->add(
+                std::make_shared<Rect>(
+                    0, 555, 0, 555, 0, Rect::kXZ, white));
+            world->add(
+                std::make_shared<FlipNormals>(
+                    std::make_shared<Rect>(
+                        0, 555, 0, 555, 555, Rect::kXY, white)));
+            world->add(
+                std::make_shared<Box>(vec3(130, 0, 65), vec3(295, 165, 230), white));
+            world->add(
+                std::make_shared<Box>(vec3(265, 0, 295), vec3(430, 330, 460), white));
+
             m_world.reset(world);
         }
 
@@ -365,7 +444,7 @@ namespace rayt {
 int main()
 {
     int nx = 200;
-    int ny = 100;
+    int ny = 200;
     int ns = 500;
     std::unique_ptr<rayt::Scene> scene(std::make_unique<rayt::Scene>(nx, ny, ns));
 
