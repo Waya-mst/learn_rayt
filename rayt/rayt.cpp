@@ -286,6 +286,56 @@ namespace rayt {
         ShapePtr m_shape;
     };
 
+    class Translate : public Shape {
+    public:
+        Translate(const ShapePtr& sp, const vec3& displacement)
+            : m_shape(sp)
+            , m_offset(displacement) {
+        }
+
+        virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const override {
+            Ray move_r(r.origin() - m_offset, r.direction());
+            if (m_shape->hit(move_r, t0, t1, hrec)) {
+                hrec.p += m_offset;
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+    private:
+        ShapePtr m_shape;
+        vec3 m_offset;
+    };
+
+    class Rotate : public Shape {
+    public:
+        Rotate(const ShapePtr& sp, const vec3& axis, float angle)
+            : m_shape(sp)
+            , m_quat(Quat::rotation(radians(angle), axis)){
+        }
+
+        virtual bool hit(const Ray & r, float t0, float t1, HitRec & hrec) const override {
+            Quat revq = conj(m_quat);
+            vec3 origin = rotate(revq, r.origin());
+            vec3 direction = rotate(revq, r.direction());
+            Ray rot_r(origin, direction);
+            if (m_shape->hit(rot_r, t0, t1, hrec)) {
+                hrec.p = rotate(m_quat, hrec.p);
+                hrec.n = rotate(m_quat, hrec.n);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    private:
+        ShapePtr m_shape;
+        Quat m_quat;
+
+    };
+
     class Box : public Shape {
     public:
         Box() {}
@@ -439,7 +489,7 @@ namespace rayt {
         int m_samples;
         vec3 m_backColor;
     };
-}
+};
 
 int main()
 {
