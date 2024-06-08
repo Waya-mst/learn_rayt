@@ -319,6 +319,144 @@ namespace rayt {
         std::unique_ptr<ShapeList> m_list;
     };
 
+    class Translate : public Shape {
+    public:
+        Translate(const ShapePtr& sp, const vec3& displacement)
+            : m_shape(sp)
+            , m_offset(displacement) {
+        }
+
+        virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const override {
+            Ray move_r(r.origin() - m_offset, r.direction());
+            if (m_shape->hit(move_r, t0, t1, hrec)) {
+                hrec.p += m_offset;
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+    private:
+        ShapePtr m_shape;
+        vec3 m_offset;
+    };
+
+    class Rotate : public Shape {
+    public:
+        Rotate(const ShapePtr& sp, const vec3& axis, float angle)
+            : m_shape(sp)
+            , m_quat(Quat::rotation(radians(angle), axis)) {
+        }
+
+        virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const override {
+            Quat revq = conj(m_quat);
+            vec3 origin = rotate(revq, r.origin());
+            vec3 direction = rotate(revq, r.direction());
+            Ray rot_r(origin, direction);
+            if (m_shape->hit(rot_r, t0, t1, hrec)) {
+                hrec.p = rotate(m_quat, hrec.p);
+                hrec.n = rotate(m_quat, hrec.n);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+
+    private:
+        ShapePtr m_shape;
+        Quat m_quat;
+    };
+
+    class ShapeBuilder {
+    public:
+        ShapeBuilder() {}
+        ShapeBuilder(const ShapePtr& sp)
+            : m_ptr(sp) {
+        }
+
+        ShapeBuilder& reset(const ShapePtr& sp) {
+            m_ptr = sp;
+            return *this;
+        }
+
+        ShapeBuilder& sphere(const vec3& c, float r, const MaterialPtr& m) {
+            m_ptr = std::make_shared<Sphere>(c, r, m);
+            return *this;
+        }
+
+        ShapeBuilder& rect(float x0, float x1, float y0, float y1, float k, Rect::AxisType axis, const MaterialPtr& m) {
+            m_ptr = std::make_shared<Rect>(x0, x1, y0, y1, k, axis, m);
+            return *this;
+        }
+        ShapeBuilder& rectXY(float x0, float x1, float y0, float y1, float k, const MaterialPtr& m) {
+            m_ptr = std::make_shared<Rect>(x0, x1, y0, y1, k, Rect::kXY, m);
+            return *this;
+        }
+        ShapeBuilder& rectXZ(float x0, float x1, float y0, float y1, float k, const MaterialPtr& m) {
+            m_ptr = std::make_shared<Rect>(x0, x1, y0, y1, k, Rect::kXZ, m);
+            return *this;
+        }
+        ShapeBuilder& rectYZ(float x0, float x1, float y0, float y1, float k, const MaterialPtr& m) {
+            m_ptr = std::make_shared<Rect>(x0, x1, y0, y1, k, Rect::kYZ, m);
+            return *this;
+        }
+
+        ShapeBuilder& rect(const vec3& p0, const vec3& p1, float k, Rect::AxisType axis, const MaterialPtr& m) {
+            switch (axis) {
+            case Rect::kXY:
+                m_ptr = std::make_shared<Rect>(
+                    p0.getX(), p1.getX(), p0.getY(), p1.getY(), k, axis, m);
+                break;
+            case Rect::kXZ:
+                m_ptr = std::make_shared<Rect>(
+                    p0.getX(), p1.getX(), p0.getZ(), p1.getZ(), k, axis, m);
+                break;
+            case Rect::kYZ:
+                m_ptr = std::make_shared<Rect>(
+                    p0.getY(), p1.getY(), p0.getZ(), p1.getZ(), k, axis, m);
+                break;
+            }
+            return *this;
+        }
+        ShapeBuilder& rectXY(const vec3& p0, const vec3& p1, float k, const MaterialPtr& m) {
+            return rect(p0, p1, k, Rect::kXY, m);
+        }
+        ShapeBuilder& rectXZ(const vec3& p0, const vec3& p1, float k, const MaterialPtr& m) {
+            return rect(p0, p1, k, Rect::kXZ, m);
+        }
+        ShapeBuilder& rectYZ(const vec3& p0, const vec3& p1, float k, const MaterialPtr& m) {
+            return rect(p0, p1, k, Rect::kYZ, m);
+        }
+
+        ShapeBuilder& box(const vec3& p0, const vec3& p1, const MaterialPtr& m) {
+            m_ptr = std::make_shared<Box>(p0, p1, m);
+            return *this;
+        }
+
+        ShapeBuilder& flip() {
+            m_ptr = std::make_shared<FlipNormals>(m_ptr);
+            return *this;
+        }
+
+        ShapeBuilder& translate(const vec3& t) {
+            m_ptr = std::make_shared<Translate>(m_ptr, t);
+            return *this;
+        }
+
+        ShapeBuilder& rotate(const vec3& axis, float angle) {
+            m_ptr = std::make_shared<Rotate>(m_ptr, axis, angle);
+            return *this;
+        }
+
+        const ShapePtr& get() const { return m_ptr; }
+
+    private:
+        ShapePtr m_ptr;
+    };
+
+
     class Scene {
     public:
         Scene(int width, int height, int samples)
@@ -352,32 +490,21 @@ namespace rayt {
                 std::make_shared<ColorTexture>(vec3(15.0f)));
 
             ShapeList* world = new ShapeList();
-            world->add(
-                std::make_shared<FlipNormals>(
-                    std::make_shared<Rect>(
-                        0, 555, 0, 555, 555, Rect::kYZ, green)));
-            world->add(
-                std::make_shared<Rect>(
-                    0, 555, 0, 555, 0, Rect::kYZ, red));
-            world->add(
-                std::make_shared<Rect>(
-                    213, 343, 227, 332, 554, Rect::kXZ, light));
-            world->add(
-                std::make_shared<FlipNormals>(
-                    std::make_shared<Rect>(
-                        0, 555, 0, 555, 555, Rect::kXZ, white)));
-            world->add(
-                std::make_shared<Rect>(
-                    0, 555, 0, 555, 0, Rect::kXZ, white));
-            world->add(
-                std::make_shared<FlipNormals>(
-                    std::make_shared<Rect>(
-                        0, 555, 0, 555, 555, Rect::kXY, white)));
-            world->add(
-                std::make_shared<Box>(vec3(130, 0, 65), vec3(295, 165, 230), white));
-            world->add(
-                std::make_shared<Box>(vec3(265, 0, 295), vec3(430, 330, 460), white));
-
+            ShapeBuilder builder;
+            world->add(builder.rectYZ(0, 555, 0, 555, 555, green).flip().get());
+            world->add(builder.rectYZ(0, 555, 0, 555, 0, red).get());
+            world->add(builder.rectXZ(213, 343, 227, 332, 554, light).get());
+            world->add(builder.rectXZ(0, 555, 0, 555, 555, white).flip().get());
+            world->add(builder.rectXZ(0, 555, 0, 555, 0, white).get());
+            world->add(builder.rectXY(0, 555, 0, 555, 555, white).flip().get());
+            world->add(builder.box(vec3(0), vec3(165), white)
+                .rotate(vec3::yAxis(), -18)
+                .translate(vec3(130, 0, 65))
+                .get());
+            world->add(builder.box(vec3(0), vec3(165, 330, 165), white)
+                .rotate(vec3::yAxis(), 15)
+                .translate(vec3(265, 0, 295))
+                .get());
             m_world.reset(world);
         }
 
