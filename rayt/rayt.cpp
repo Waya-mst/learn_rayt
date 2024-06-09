@@ -21,12 +21,14 @@ namespace rayt {
     public:
         Ray ray;
         vec3 albedo;
+        float pdf_value;
     };
 
     class Material {
     public:
         virtual bool scatter(const Ray& r, const HitRec& hrec, ScatterRec& srec) const = 0;
         virtual vec3 emitted(const Ray& r, const HitRec& hrec) const { return vec3(0); }
+        virtual float scattering_pdf(const Ray& r, const HitRec& hrec) const { return 0; }
     };
 
     class DiffuseLight : public Material {
@@ -55,10 +57,15 @@ namespace rayt {
 
         virtual bool scatter(const Ray& r, const HitRec& hrec, ScatterRec& srec) const override {
             vec3 target = hrec.p + hrec.n + random_in_unit_sphere();
-            srec.ray = Ray(hrec.p, target - hrec.p);
+            srec.ray = Ray(hrec.p, normalize(target - hrec.p));
             srec.albedo = m_albedo->value(hrec.u, hrec.v, hrec.p);
+            srec.pdf_value = dot(hrec.n, srec.ray.direction()) / PI;
             return true;
         };
+
+        virtual float scattering_pdf(const Ray& r, const HitRec& hrec) const override {
+            return std::max(dot(hrec.n, normalize(r.direction())), 0.0f) / PI;
+        }
 
     private:
         TexturePtr m_albedo;
@@ -369,55 +376,6 @@ namespace rayt {
         std::unique_ptr<ShapeList> m_list;
     };
 
-    class Translate : public Shape {
-    public:
-        Translate(const ShapePtr& sp, const vec3& displacement)
-            : m_shape(sp)
-            , m_offset(displacement) {
-        }
-
-        virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const override {
-            Ray move_r(r.origin() - m_offset, r.direction());
-            if (m_shape->hit(move_r, t0, t1, hrec)) {
-                hrec.p += m_offset;
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-
-    private:
-        ShapePtr m_shape;
-        vec3 m_offset;
-    };
-
-    class Rotate : public Shape {
-    public:
-        Rotate(const ShapePtr& sp, const vec3& axis, float angle)
-            : m_shape(sp)
-            , m_quat(Quat::rotation(radians(angle), axis)) {
-        }
-
-        virtual bool hit(const Ray& r, float t0, float t1, HitRec& hrec) const override {
-            Quat revq = conj(m_quat);
-            vec3 origin = rotate(revq, r.origin());
-            vec3 direction = rotate(revq, r.direction());
-            Ray rot_r(origin, direction);
-            if (m_shape->hit(rot_r, t0, t1, hrec)) {
-                hrec.p = rotate(m_quat, hrec.p);
-                hrec.n = rotate(m_quat, hrec.n);
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-
-    private:
-        ShapePtr m_shape;
-        Quat m_quat;
-    };
 
     class ShapeBuilder {
     public:
@@ -561,12 +519,13 @@ namespace rayt {
 
         vec3 color(const rayt::Ray& r, const Shape* world, int depth) {
             HitRec hrec;
-
             if (world->hit(r, 0.001f, FLT_MAX, hrec)) {
                 vec3 emitted = hrec.mat->emitted(r, hrec);
                 ScatterRec srec;
-                if (depth < MAX_DEPTH && hrec.mat->scatter(r, hrec, srec)) {
-                    return emitted + mulPerElem(srec.albedo, color(srec.ray, world, depth + 1));
+                if (depth < MAX_DEPTH && hrec.mat->scatter(r, hrec, srec) && srec.pdf_value > 0) {
+                    float spdf_value = hrec.mat->scattering_pdf(srec.ray, hrec);
+                    vec3 albedo = srec.albedo * spdf_value;
+                    return emitted + mulPerElem(albedo, color(srec.ray, world, depth + 1)) / srec.pdf_value;
                 }
                 else {
                     return emitted;

@@ -14,11 +14,7 @@ C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.h(252,60): warning C4244: 
 C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.h(251,56): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
   (ソース ファイル 'rayt.cpp' をコンパイルしています)
   
-<<<<<<< HEAD
-C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.cpp(554,26): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
-=======
-C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(452,26): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
->>>>>>> 3ac196abb7e2129fe17f3a8ecea01f3c1090f1de
+C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.cpp(563,26): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\memory(3434,56): warning C4244: '引数': '_Ty' から 'float' への変換です。データが失われる可能性があります。
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\memory(3434,56): warning C4244:         with
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\memory(3434,56): warning C4244:         [
@@ -27,37 +23,7 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.3351
   (ソース ファイル 'rayt.cpp' をコンパイルしています)
   C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\memory(3434,56):
   テンプレートインスタンス化コンテキスト (最初に最も古いもの) は
-<<<<<<< HEAD
-  	C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.cpp(479,29):
+  	C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.cpp(487,29):
   	コンパイル対象の関数 テンプレート インスタンス化 'std::unique_ptr<rayt::Camera,std::default_delete<rayt::Camera>> std::make_unique<rayt::Camera,vec3&,vec3&,vec3&,int,float&,0>(vec3 &,vec3 &,vec3 &,int &&,float &)' のリファレンスを確認してください
   
   rayt.vcxproj -> C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\x64\Debug\rayt.exe
-=======
-  	C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(366,29):
-  	コンパイル対象の関数 テンプレート インスタンス化 'std::unique_ptr<rayt::Camera,std::default_delete<rayt::Camera>> std::make_unique<rayt::Camera,vec3&,vec3&,vec3&,int,float&,0>(vec3 &,vec3 &,vec3 &,int &&,float &)' のリファレンスを確認してください
-  
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82): warning C4244: '引数': '_Ty' から 'float' への変換です。データが失われる可能性があります。
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82): warning C4244:         with
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82): warning C4244:         [
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82): warning C4244:             _Ty=int
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82): warning C4244:         ]
-  (ソース ファイル 'rayt.cpp' をコンパイルしています)
-  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\xutility(255,82):
-  テンプレートインスタンス化コンテキスト (最初に最も古いもの) は
-  	C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\rayt.cpp(382,26):
-  	コンパイル対象の関数 テンプレート インスタンス化 'std::shared_ptr<rayt::Rect> std::make_shared<rayt::Rect,int,int,int,int,int,rayt::Rect::AxisType,rayt::MaterialPtr&>(int &&,int &&,int &&,int &&,int &&,rayt::Rect::AxisType &&,rayt::MaterialPtr &)' のリファレンスを確認してください
-  	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\memory(2738,46):
-  	コンパイル対象の関数 テンプレート インスタンス化 'std::_Ref_count_obj2<rayt::Rect>::_Ref_count_obj2<_Ty,_Ty,_Ty,_Ty,_Ty,rayt::Rect::AxisType,rayt::MaterialPtr&>(_Ty &&,_Ty &&,_Ty &&,_Ty &&,_Ty &&,rayt::Rect::AxisType &&,rayt::MaterialPtr &)' のリファレンスを確認してください
-          with
-          [
-              _Ty=int
-          ]
-  	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\memory(2062,18):
-  	コンパイル対象の関数 テンプレート インスタンス化 'void std::_Construct_in_place<_Ty,int,int,int,int,int,rayt::Rect::AxisType,rayt::MaterialPtr&>(_Ty &,int &&,int &&,int &&,int &&,int &&,rayt::Rect::AxisType &&,rayt::MaterialPtr &) noexcept(false)' のリファレンスを確認してください
-          with
-          [
-              _Ty=rayt::Rect
-          ]
-  
-  rayt.vcxproj -> C:\Users\kamee\workspace\learn_rayt\learn_rayt\rayt\x64\Debug\rayt.exe
->>>>>>> 3ac196abb7e2129fe17f3a8ecea01f3c1090f1de
