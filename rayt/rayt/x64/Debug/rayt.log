@@ -1,20 +1,20 @@
 ﻿  rayt.cpp
-C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.h(242,19): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.h(292,19): warning C4244: '初期化中': 'float' から 'int' への変換です。データが失われる可能性があります。
   (ソース ファイル 'rayt.cpp' をコンパイルしています)
   
-C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.h(243,19): warning C4244: '初期化中': 'double' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.h(293,19): warning C4244: '初期化中': 'double' から 'int' への変換です。データが失われる可能性があります。
   (ソース ファイル 'rayt.cpp' をコンパイルしています)
   
-C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.h(253,60): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.h(303,60): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
   (ソース ファイル 'rayt.cpp' をコンパイルしています)
   
-C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.h(252,60): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.h(302,60): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
   (ソース ファイル 'rayt.cpp' をコンパイルしています)
   
-C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.h(251,56): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.h(301,56): warning C4244: '引数': 'double' から 'float' への変換です。データが失われる可能性があります。
   (ソース ファイル 'rayt.cpp' をコンパイルしています)
   
-C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.cpp(563,26): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
+C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.cpp(566,26): warning C4244: '引数': 'int' から 'float' への変換です。データが失われる可能性があります。
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\memory(3434,56): warning C4244: '引数': '_Ty' から 'float' への変換です。データが失われる可能性があります。
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\memory(3434,56): warning C4244:         with
 C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\memory(3434,56): warning C4244:         [
@@ -23,7 +23,7 @@ C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.3351
   (ソース ファイル 'rayt.cpp' をコンパイルしています)
   C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.39.33519\include\memory(3434,56):
   テンプレートインスタンス化コンテキスト (最初に最も古いもの) は
-  	C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.cpp(487,29):
+  	C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\rayt.cpp(490,29):
   	コンパイル対象の関数 テンプレート インスタンス化 'std::unique_ptr<rayt::Camera,std::default_delete<rayt::Camera>> std::make_unique<rayt::Camera,vec3&,vec3&,vec3&,int,float&,0>(vec3 &,vec3 &,vec3 &,int &&,float &)' のリファレンスを確認してください
   
   rayt.vcxproj -> C:\Users\kamee\Desktop\workspace\learn_rayt\rayt\x64\Debug\rayt.exe

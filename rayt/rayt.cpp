@@ -56,10 +56,13 @@ namespace rayt {
         }
 
         virtual bool scatter(const Ray& r, const HitRec& hrec, ScatterRec& srec) const override {
+            ONB onb;
+            onb.build_from_w(hrec.n);
+            vec3 direction = onb.local(random_cosine_direction());
             vec3 target = hrec.p + hrec.n + random_in_unit_sphere();
             srec.ray = Ray(hrec.p, normalize(target - hrec.p));
             srec.albedo = m_albedo->value(hrec.u, hrec.v, hrec.p);
-            srec.pdf_value = dot(hrec.n, srec.ray.direction()) / PI;
+            srec.pdf_value = dot(onb.w(), srec.ray.direction()) / PI;
             return true;
         };
 
