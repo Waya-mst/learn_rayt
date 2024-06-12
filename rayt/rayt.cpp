@@ -525,7 +525,11 @@ namespace rayt {
             if (world->hit(r, 0.001f, FLT_MAX, hrec)) {
                 vec3 emitted = hrec.mat->emitted(r, hrec);
                 ScatterRec srec;
-                if (depth < MAX_DEPTH && hrec.mat->scatter(r, hrec, srec) && srec.pdf_value > 0) {
+                if (depth < MAX_DEPTH && hrec.mat->scatter(r, hrec, srec)) {
+
+                    vec3 on_light = vec3(213 + drand48() * (343 - 213), 554, 227 + drand48() * (332 - 227));
+                    vec3 to_light = on_light - hrec.p;
+
                     float spdf_value = hrec.mat->scattering_pdf(srec.ray, hrec);
                     vec3 albedo = srec.albedo * spdf_value;
                     return emitted + mulPerElem(albedo, color(srec.ray, world, depth + 1)) / srec.pdf_value;
